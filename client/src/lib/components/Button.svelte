@@ -7,6 +7,7 @@
 
 <button
 	{...$$restProps}
+	on:click
 	class="btn {className}"
 	class:btn-primary={color === 'primary'}
 	class:btn-secondary={color === 'secondary'}
