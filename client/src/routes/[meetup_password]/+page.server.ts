@@ -1,4 +1,4 @@
-import { redirect, type Load } from "@sveltejs/kit"
+import { redirect, type Load } from '@sveltejs/kit';
 
 const correct_password = '1701';
 
@@ -12,4 +12,4 @@ export const load: Load = ({ params }) => {
   } else {
     throw redirect(307, '/');
   }
-}
+};
