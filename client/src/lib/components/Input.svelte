@@ -3,9 +3,15 @@
   export let className = '';
   export { className as class };
   export let value = '';
+  export let label = '';
 </script>
 
 <div>
+  {#if label?.length > 0}
+    <div class="label">
+      <span class="label-text">{label}</span>
+    </div>
+  {/if}
   <input
     bind:value
     class="input input-bordered {className}"

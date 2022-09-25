@@ -3,9 +3,11 @@
 
   import Button from '$lib/components/Button.svelte';
   import Input from '$lib/components/Input.svelte';
-  let invitePassword = '';
+  let invitePassword = '1701170117';
+  const minPasswordLength = 10;
 
   function navigateToMeetup() {
+    console.log('/' + invitePassword);
     goto('/' + invitePassword);
   }
 </script>
@@ -20,14 +22,17 @@
           bind:value={invitePassword}
           variant="primary"
           placeholder="Invite Password"
-          maxlength="10"
-          minlength="10"
+          maxlength={minPasswordLength}
+          minlength={minPasswordLength}
         />
         <Button
           color="primary"
           type="submit"
-          on:click={() => navigateToMeetup()}>Go</Button
+          on:click={() => navigateToMeetup()}
+          disabled={invitePassword.length < minPasswordLength}
         >
+          Go
+        </Button>
       </form>
       <Button color="secondary" variant="outlined" class="normal-case">
         ...or organize your own!
