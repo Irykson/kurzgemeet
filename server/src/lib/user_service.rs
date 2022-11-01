@@ -1,13 +1,11 @@
-use std::error::Error;
-
-use diesel::associations::HasTable;
-use diesel::{Connection, PgConnection, RunQueryDsl};
+use diesel::result::Error;
+use diesel::{PgConnection, RunQueryDsl};
 
 use crate::lib::data_model::{NewEmailUser, NewPasswordUser, NewUser, User};
 use crate::lib::establish_db_connection;
-use crate::lib::schema::email_users::dsl::email_users;
-use crate::lib::schema::password_users::dsl::password_users;
-use crate::lib::schema::users::dsl::users;
+use crate::lib::schema::users::dsl::*;
+
+use super::schema::{email_users, password_users, users};
 
 pub struct CreateUser {
     pub name: String,
@@ -38,10 +36,11 @@ impl UserService {
         };
 
         self.connection
-            .transaction::<_, dyn Error, _>(|| {
+            .build_transaction()
+            .run::<_, Error, _>(|conn| {
                 let new_user: User = diesel::insert_into(users::table)
                     .values(new_user)
-                    .get_result(&mut self.connection)?;
+                    .get_result(conn)?;
 
                 if let Some(email) = new.email {
                     let new_email = NewEmailUser {
@@ -50,7 +49,7 @@ impl UserService {
                     };
                     diesel::insert_into(email_users::table)
                         .values(new_email)
-                        .execute(&mut self.connection)?;
+                        .execute(conn)?;
                 }
 
                 let new_password = NewPasswordUser {
@@ -59,7 +58,7 @@ impl UserService {
                 };
                 diesel::insert_into(password_users::table)
                     .values(new_password)
-                    .execute(&mut self.connection)?;
+                    .execute(conn)?;
 
                 Ok(new_user)
             })

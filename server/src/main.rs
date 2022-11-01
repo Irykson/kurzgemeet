@@ -1,8 +1,9 @@
+use crate::lib::data_model::{Meetup, NewMeetup};
 use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
 use serde_json::json;
 
 use crate::lib::meetup_service::MeetupService;
-use crate::lib::ReadonlyService;
+use crate::lib::{CrudService, ReadonlyService};
 
 mod lib;
 mod services;
@@ -19,6 +20,23 @@ async fn echo(req_body: String) -> impl Responder {
 
 async fn manual_hello() -> impl Responder {
     HttpResponse::Ok().body("Hey there!")
+}
+
+#[post("/meetups")]
+async fn create_meetup(/* TODO payload */) -> impl Responder {
+    // TODOs
+    // - check how to make this a Singleton instead and if this is would be a good idea
+    // - check how to enforce authentication and get user information
+    let mut meetup_service: Box<dyn CrudService<NewMeetup, Meetup>> =
+        Box::new(MeetupService::new());
+    let result = meetup_service.create(&NewMeetup {
+        name: "test".to_string(),
+        description: "meet test".to_string(),
+        password: "hello world".to_string(),
+        user_id: 0, // dummy for now
+    });
+
+    web::Json(json!(result))
 }
 
 #[get("/meetups")]

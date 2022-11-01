@@ -1,5 +1,4 @@
 use chrono::NaiveDateTime;
-use diesel::associations::HasTable;
 use diesel::prelude::*;
 use serde::Serialize;
 
@@ -21,6 +20,7 @@ pub struct NewUser {
 #[diesel(belongs_to(User))]
 pub struct PasswordUser {
     id: i32,
+    // TODO encrypt
     password: String,
     user_id: i32,
 }
@@ -37,7 +37,6 @@ pub struct NewPasswordUser {
 pub struct EmailUser {
     id: i32,
     email: String,
-    // how to encrypt?
     user_id: i32,
 }
 
@@ -97,8 +96,8 @@ pub struct Meetup {
 #[derive(Insertable)]
 #[diesel(table_name = meetups)]
 pub struct NewMeetup {
-    password: String,
-    name: String,
-    description: String,
-    user_id: i32,
+    pub password: String,
+    pub name: String,
+    pub description: String,
+    pub user_id: i32,
 }
